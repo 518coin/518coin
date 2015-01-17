@@ -2461,7 +2461,7 @@ bool LoadBlockIndex(bool fAllowNew)
 
         const char* pszTimestamp = "Paris post office siege";
         CTransaction txNew;
-        txNew.nTime = 1421434761;
+        txNew.nTime = 1421461102;
         txNew.vin.resize(1);
         txNew.vout.resize(1);
         txNew.vin[0].scriptSig = CScript() << 0 << CBigNum(42) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
@@ -2472,16 +2472,16 @@ bool LoadBlockIndex(bool fAllowNew)
         block.hashPrevBlock = 0;
         block.hashMerkleRoot = block.BuildMerkleTree();
         block.nVersion = 1;
-        block.nTime    = 1421434761;
+        block.nTime    = 1421461102;
         block.nBits    = bnProofOfWorkLimit.GetCompact();
-        block.nNonce   = !fTestNet ? 3383180 : 0;
+        block.nNonce   = !fTestNet ? 6967228 : 0;
         
         
         //// debug print
         printf("%s\n", block.GetHash().ToString().c_str());
         printf("%s\n", hashGenesisBlock.ToString().c_str());
         printf("%s\n", block.hashMerkleRoot.ToString().c_str());
-        assert(block.hashMerkleRoot == uint256("0xc3a9bcdb05336d45ebf663dfa5a68c54fe6a85d49b1058f0ff0ae832e0fd9bf1"));
+        assert(block.hashMerkleRoot == uint256("0xc7654b202168857195c40b5535f5e4100e198a2010dd12d6fd8ce700f3c062f5"));
 
         /*
         // If genesis block hash does not match, then generate new genesis hash.
