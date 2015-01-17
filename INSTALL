@@ -1,0 +1,9 @@
+Building 518Coin
+
+See doc/readme-qt.rst for instructions on building 518Coin QT,
+the intended-for-end-users, nice-graphical-interface, reference
+implementation of 518Coin.
+
+See doc/build-*.txt for instructions on building 518coind,
+the intended-for-services, no-graphical-interface, reference
+implementation of 518Coin.
