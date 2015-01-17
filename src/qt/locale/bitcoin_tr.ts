@@ -2674,8 +2674,8 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
     </message>
     <message>
         <location line="+6"/>
-        <source>Listen for connections on &lt;port&gt; (default: 51737 or testnet: 51997)</source>
-        <translation>&lt;port&gt; üzerinde bağlantıları dinle (varsayılan: 51737 veya testnet: 51997)</translation>
+        <source>Listen for connections on &lt;port&gt; (default: 51801 or testnet: 41801)</source>
+        <translation>&lt;port&gt; üzerinde bağlantıları dinle (varsayılan: 51801 veya testnet: 41801)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2734,8 +2734,8 @@ This label turns red, if the priority is smaller than &quot;medium&quot;.
     </message>
     <message>
         <location line="-87"/>
-        <source>Listen for JSON-RPC connections on &lt;port&gt; (default: 51736 or testnet: 51996)</source>
-        <translation>&lt;port&gt; üzerinde JSON-RPC bağlantılarını dinle (varsayılan: 51736 veya testnet: 51996)</translation>
+        <source>Listen for JSON-RPC connections on &lt;port&gt; (default: 51800 or testnet: 41800)</source>
+        <translation>&lt;port&gt; üzerinde JSON-RPC bağlantılarını dinle (varsayılan: 51800 veya testnet: 41800)</translation>
     </message>
     <message>
         <location line="-11"/>

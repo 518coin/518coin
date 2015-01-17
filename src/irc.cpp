@@ -303,8 +303,8 @@ void ThreadIRCSeed2(void* parg)
 
         if (fTestNet)
         {
-            Send(hSocket, "JOIN #518oinTEST\r");
-            Send(hSocket, "WHO #518oinTEST\r");
+            Send(hSocket, "JOIN #518coinTEST\r");
+            Send(hSocket, "WHO #518coinTEST\r");
         } else
         {
             // randomly join #518coin00-#518coin05
@@ -312,8 +312,8 @@ void ThreadIRCSeed2(void* parg)
 
             // Channel number is always 0 for initial release
             int channel_number = 0;
-            Send(hSocket, strprintf("JOIN #518oin%02d\r", channel_number).c_str());
-            Send(hSocket, strprintf("WHO #518oin%02d\r", channel_number).c_str());
+            Send(hSocket, strprintf("JOIN #518coin%02d\r", channel_number).c_str());
+            Send(hSocket, strprintf("WHO #518coin%02d\r", channel_number).c_str());
         }
 
         int64_t nStart = GetTime();

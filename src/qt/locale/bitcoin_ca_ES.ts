@@ -2668,8 +2668,8 @@ En aquest cas es requereix una comisió d&apos;almenys 2%.</translation>
     </message>
     <message>
         <location line="+6"/>
-        <source>Listen for connections on &lt;port&gt; (default: 51737 or testnet: 51997)</source>
-        <translation>Escoltar connexions en &lt;port&gt; (per defecte: 51737 o testnet: 51997)</translation>
+        <source>Listen for connections on &lt;port&gt; (default: 51801 or testnet: 41801)</source>
+        <translation>Escoltar connexions en &lt;port&gt; (per defecte: 51801 o testnet: 41801)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2728,8 +2728,8 @@ En aquest cas es requereix una comisió d&apos;almenys 2%.</translation>
     </message>
     <message>
         <location line="-87"/>
-        <source>Listen for JSON-RPC connections on &lt;port&gt; (default: 51736 or testnet: 51996)</source>
-        <translation>Escoltar connexions JSON-RPC al port &lt;port&gt; (per defecte: 51736 o testnet: 51996)</translation>
+        <source>Listen for JSON-RPC connections on &lt;port&gt; (default: 51800 or testnet: 41800)</source>
+        <translation>Escoltar connexions JSON-RPC al port &lt;port&gt; (per defecte: 51800 o testnet: 41800)</translation>
     </message>
     <message>
         <location line="-11"/>

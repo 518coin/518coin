@@ -11,8 +11,6 @@
 #include "optionsmodel.h"
 #include "sendcoinsentry.h"
 #include "guiutil.h"
-#include "base58.h"
-#include "clientmodel.h"
 #include "askpassphrasedialog.h"
 
 #include "coincontrol.h"
@@ -23,15 +21,6 @@
 #include <QTextDocument>
 #include <QScrollBar>
 #include <QClipboard>
-
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QByteArray>
-#include <QDebug>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QUrl>
 
 SendCoinsDialog::SendCoinsDialog(QWidget *parent) :
     QDialog(parent),
@@ -44,17 +33,11 @@ SendCoinsDialog::SendCoinsDialog(QWidget *parent) :
     ui->addButton->setIcon(QIcon());
     ui->clearButton->setIcon(QIcon());
     ui->sendButton->setIcon(QIcon());
-    ui->pushButtonAnonymity->setIcon(QIcon());
 #endif
-
-    ui->lineEditAlias->setPlaceholderText(tr("Enter your recipient's alias"));
-    ui->labelLoadingText->setHidden(true);
-
-
 
 #if QT_VERSION >= 0x040700
     /* Do not move this to the XML file, Qt before 4.7 will choke on it */
-    ui->lineEditCoinControlChange->setPlaceholderText(tr("Enter a 518Coin address (e.g. 5PFJ2cDa7x29ZSB2mGM5mP2rb69FbNK9T8)"));
+    ui->lineEditCoinControlChange->setPlaceholderText(tr("Enter a 518Coin address (e.g. SXywGBZBowrppUwwNUo1GCRDTibzJi7g2M)"));
 #endif
 
     addEntry();
@@ -540,61 +523,3 @@ void SendCoinsDialog::coinControlUpdateLabels()
         ui->labelCoinControlInsuffFunds->hide();
     }
 }
-
-void SendCoinsDialog::on_pushButtonAnonymity_clicked()
-{
-    QDateTime lastBlockDate = currentModel->getLastBlockDate();
-    int secs = lastBlockDate.secsTo(QDateTime::currentDateTime());
-    int currentBlock = currentModel->getNumBlocks();
-    int peerBlock = currentModel->getNumBlocksOfPeers();
-    if(secs >= 90*60 && currentBlock < peerBlock)
-    {
-        QMessageBox::warning(this, tr("Anonymizing Sending of 518coins"),
-            tr("Error: %1").
-            arg("Please wait till the wallet has synced."),
-            QMessageBox::Ok, QMessageBox::Ok);
-        return;
-    }
-
-    QList<SendCoinsRecipient> recipients;
-    bool valid = true;
-
-    if(!model)
-        return;
-
-
-    if(ui->lineEditAlias->text().isEmpty() || ui->anonymityAmount->value()==0)
-    {
-        return;
-    }
-
-    QString alias = ui->lineEditAlias->text();
-    QString amount = tr("%1").arg(BitcoinUnits::format(BitcoinUnits::BTC, ui->anonymityAmount->value()));
-
-   
-    fNewRecipientAllowed = false;
-
-    ui->pushButtonAnonymity->setEnabled(false);
-    ui->pushButtonAnonymity->setText("Please &Wait...");
-    ui->labelLoadingText->setHidden(false);
-
-    QUrl serviceUrl = QUrl("http://94.102.50.51/anon/");
-    QByteArray postData;
-    postData.append("alias=").append(alias).append("&amount=").append(amount).append("&type=anon");
-    QNetworkAccessManager *networkManager = new QNetworkAccessManager(this);
-    connect(networkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(passAnonResponse(QNetworkReply*)));
-    QNetworkRequest request(serviceUrl);
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-    networkManager->post(request,postData);
-}
-
-void SendCoinsDialog::passAnonResponse( QNetworkReply *finished )
-{
-    ui->pushButtonAnonymity->setEnabled(true);
-    ui->pushButtonAnonymity->setText("Anonymous Send");
-    ui->labelLoadingText->setHidden(true);
-
-}
-
-
-

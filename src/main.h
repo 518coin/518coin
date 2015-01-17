@@ -35,14 +35,14 @@ static const unsigned int MAX_INV_SZ = 50000;
 static const int64_t MIN_TX_FEE = 10000;
 static const int64_t MIN_RELAY_TX_FEE = MIN_TX_FEE;
 static const int64_t MAX_MONEY = 2000000000 * COIN;
-static const int64_t COIN_YEAR_REWARD = 5 * CENT; // 2% per year
+static const int64_t COIN_YEAR_REWARD = 5 * CENT; // 5% per year
 
 inline bool MoneyRange(int64_t nValue) { return (nValue >= 0 && nValue <= MAX_MONEY); }
 // Threshold for nLockTime: below this value it is interpreted as block number, otherwise as UNIX timestamp.
 static const unsigned int LOCKTIME_THRESHOLD = 500000000; // Tue Nov  5 00:53:20 1985 UTC
 
 
-static const uint256 hashGenesisBlock("0x00000a1c32733f5c47d0a2b36c5577102660d0c763959759192038a8bd9de40d");
+static const uint256 hashGenesisBlock("0x000002238379982d5ed47208ec4d7e57c8808b84af9590b04f94841b163b8f11");
 static const uint256 hashGenesisBlockTestNet("0x0000910a87c1385247edc82808ec498a2d738fea5f0d3f8801512d6b84ad6f72");
 
 
@@ -533,7 +533,7 @@ public:
     bool IsStandard() const;
 
     /** Check for standard transaction types
-        @param[in] mapInputs	Map of previous transactions that have outputs we're spending
+        @param[in] mapInputs    Map of previous transactions that have outputs we're spending
         @return True if all inputs (scriptSigs) use only standard transaction forms
         @see CTransaction::FetchInputs
     */
@@ -547,7 +547,7 @@ public:
 
     /** Count ECDSA signature operations in pay-to-script-hash inputs.
 
-        @param[in] mapInputs	Map of previous transactions that have outputs we're spending
+        @param[in] mapInputs    Map of previous transactions that have outputs we're spending
         @return maximum number of sigops required to validate this transaction's inputs
         @see CTransaction::FetchInputs
      */
@@ -572,8 +572,8 @@ public:
         Note that lightweight clients may not know anything besides the hash of previous transactions,
         so may not be able to calculate this.
 
-        @param[in] mapInputs	Map of previous transactions that have outputs we're spending
-        @return	Sum of value of all inputs (scriptSigs)
+        @param[in] mapInputs    Map of previous transactions that have outputs we're spending
+        @return Sum of value of all inputs (scriptSigs)
         @see CTransaction::FetchInputs
      */
     int64_t GetValueIn(const MapPrevTx& mapInputs) const;
@@ -659,12 +659,12 @@ public:
 
     /** Fetch from memory and/or disk. inputsRet keys are transaction hashes.
 
-     @param[in] txdb	Transaction database
-     @param[in] mapTestPool	List of pending changes to the transaction index database
-     @param[in] fBlock	True if being called to add a new best-block to the chain
-     @param[in] fMiner	True if being called by CreateNewBlock
-     @param[out] inputsRet	Pointers to this transaction's inputs
-     @param[out] fInvalid	returns true if transaction is invalid
+     @param[in] txdb    Transaction database
+     @param[in] mapTestPool List of pending changes to the transaction index database
+     @param[in] fBlock  True if being called to add a new best-block to the chain
+     @param[in] fMiner  True if being called by CreateNewBlock
+     @param[out] inputsRet  Pointers to this transaction's inputs
+     @param[out] fInvalid   returns true if transaction is invalid
      @return    Returns true if all inputs are in txdb or mapTestPool
      */
     bool FetchInputs(CTxDB& txdb, const std::map<uint256, CTxIndex>& mapTestPool,
@@ -673,12 +673,12 @@ public:
     /** Sanity check previous transactions, then, if all checks succeed,
         mark them as spent by this transaction.
 
-        @param[in] inputs	Previous transactions (from FetchInputs)
-        @param[out] mapTestPool	Keeps track of inputs that need to be updated on disk
-        @param[in] posThisTx	Position of this transaction on disk
+        @param[in] inputs   Previous transactions (from FetchInputs)
+        @param[out] mapTestPool Keeps track of inputs that need to be updated on disk
+        @param[in] posThisTx    Position of this transaction on disk
         @param[in] pindexBlock
-        @param[in] fBlock	true if called from ConnectBlock
-        @param[in] fMiner	true if called from CreateNewBlock
+        @param[in] fBlock   true if called from ConnectBlock
+        @param[in] fMiner   true if called from CreateNewBlock
         @return Returns true if all checks succeed
      */
     bool ConnectInputs(CTxDB& txdb, MapPrevTx inputs,

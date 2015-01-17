@@ -2674,8 +2674,8 @@ Tämä tarkoittaa, että ainakin %2 rahansiirtopalkkio tarvitaan.</translation>
     </message>
     <message>
         <location line="+6"/>
-        <source>Listen for connections on &lt;port&gt; (default: 51737 or testnet: 51997)</source>
-        <translation>Kuuntele yhteyksiä portissa &lt;port&gt; (oletus: 51737 tai testiverkko: 51997)</translation>
+        <source>Listen for connections on &lt;port&gt; (default: 51801 or testnet: 41801)</source>
+        <translation>Kuuntele yhteyksiä portissa &lt;port&gt; (oletus: 51801 tai testiverkko: 41801)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2734,8 +2734,8 @@ Tämä tarkoittaa, että ainakin %2 rahansiirtopalkkio tarvitaan.</translation>
     </message>
     <message>
         <location line="-87"/>
-        <source>Listen for JSON-RPC connections on &lt;port&gt; (default: 51736 or testnet: 51996)</source>
-        <translation>Kuuntele JSON-RPC-yhteyksiä portissa &lt;port&gt; (oletus: 51736 tai testiverkko: 51996)</translation>
+        <source>Listen for JSON-RPC connections on &lt;port&gt; (default: 51800 or testnet: 41800)</source>
+        <translation>Kuuntele JSON-RPC-yhteyksiä portissa &lt;port&gt; (oletus: 51800 tai testiverkko: 41800)</translation>
     </message>
     <message>
         <location line="-11"/>

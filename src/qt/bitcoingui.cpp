@@ -318,11 +318,11 @@ void BitcoinGUI::createActions()
     addressBookAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_5));
     tabGroup->addAction(addressBookAction);
 
-    /*messageAction = new QAction(QIcon(":/icons/edit"), tr("&Messages"), this);
+    messageAction = new QAction(QIcon(":/icons/edit"), tr("&Messages"), this);
     messageAction->setToolTip(tr("View and Send Encrypted messages"));
     messageAction->setCheckable(true);
     messageAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_6));
-    tabGroup->addAction(messageAction);*/
+    tabGroup->addAction(messageAction);
 
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(gotoOverviewPage()));
@@ -334,8 +334,8 @@ void BitcoinGUI::createActions()
     connect(historyAction, SIGNAL(triggered()), this, SLOT(gotoHistoryPage()));
     connect(addressBookAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(addressBookAction, SIGNAL(triggered()), this, SLOT(gotoAddressBookPage()));
-    //connect(messageAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
-    //connect(messageAction, SIGNAL(triggered()), this, SLOT(gotoMessagePage()));
+    connect(messageAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
+    connect(messageAction, SIGNAL(triggered()), this, SLOT(gotoMessagePage()));
 
     quitAction = new QAction(QIcon(":/icons/quit"), tr("E&xit"), this);
     quitAction->setToolTip(tr("Quit application"));
@@ -433,7 +433,7 @@ void BitcoinGUI::createToolBars()
     mainToolbar->addAction(receiveCoinsAction);
     mainToolbar->addAction(historyAction);
     mainToolbar->addAction(addressBookAction);
-    //mainToolbar->addAction(messageAction);
+    mainToolbar->addAction(messageAction);
     mainToolbar->setContextMenuPolicy(Qt::NoContextMenu);
 
     secondaryToolbar = addToolBar(tr("Actions toolbar"));
@@ -890,7 +890,7 @@ void BitcoinGUI::gotoSendCoinsPage()
     disconnect(exportAction, SIGNAL(triggered()), 0, 0);
 }
 
-/*void BitcoinGUI::gotoMessagePage()
+void BitcoinGUI::gotoMessagePage()
 {
     messageAction->setChecked(true);
     centralWidget->setCurrentWidget(messagePage);
@@ -898,7 +898,7 @@ void BitcoinGUI::gotoSendCoinsPage()
     exportAction->setEnabled(true);
     disconnect(exportAction, SIGNAL(triggered()), 0, 0);
     connect(exportAction, SIGNAL(triggered()), messagePage, SLOT(exportClicked()));
-}*/
+}
 
 void BitcoinGUI::gotoSignMessageTab(QString addr)
 {
@@ -966,7 +966,7 @@ void BitcoinGUI::mainToolbarOrientation(Qt::Orientation orientation)
         mainIcon->setPixmap(QPixmap(":images/518-horizontal"));
         mainIcon->show();
         mainToolbar->setStyleSheet(HORIZONTAL_TOOLBAR_STYLESHEET);
-       // messageAction->setIconText(tr("&Messages"));
+        messageAction->setIconText(tr("&Messages"));
     }
     else
     {
@@ -974,7 +974,7 @@ void BitcoinGUI::mainToolbarOrientation(Qt::Orientation orientation)
         mainIcon->show();
 
         mainToolbar->setStyleSheet(VERTICAL_TOOBAR_STYLESHEET);
-        //messageAction->setIconText(tr("Encrypted &Messages"));
+        messageAction->setIconText(tr("Encrypted &Messages"));
     }
 }
 

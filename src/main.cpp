@@ -40,7 +40,7 @@ CBigNum bnProofOfStakeLimit(~uint256(0) >> 20);
 CBigNum bnProofOfWorkLimitTestNet(~uint256(0) >> 16);
 
 unsigned int nTargetSpacing     = 60;               // 60 seconds
-unsigned int nStakeMinAge       = 5 * 60 * 60;      // 5 hours
+unsigned int nStakeMinAge       = 5 * 60 * 60;      // 8 hours
 unsigned int nStakeMaxAge       = -1;               // unlimited
 unsigned int nModifierInterval  = 10 * 60;          // time to elapse before new modifier is computed
 
@@ -2436,8 +2436,8 @@ bool LoadBlockIndex(bool fAllowNew)
 
         // Genesis block
 
-        /*-- mainnet
-        block.nTime = 1420462252 
+        /* -- mainnet
+        block.nTime = 1405769613 
         block.nNonce = 261836 
         block.GetHash = 00000eca234f07edc98aaf3f2a7b7478dc58992a9cd439323d099c6a590ca2bb
         hashMerkleRoot 26a3ff5d3dc46b091e7b58b6022982e6d27dff1bab3bd1da6beb4790983c87c4
@@ -2446,10 +2446,10 @@ bool LoadBlockIndex(bool fAllowNew)
             CTxIn(COutPoint(0000000000, 4294967295), coinbase 00012a4c5e7777772e63727970746f636f696e736e6577732e636f6d2f6e6577732f6269746c6963656e73652d726567756c6174696f6e732d666f726b65642d6769746875622d626974636f696e2d636f6d6d756e6974792f323031342f30372f3139)
             CTxOut(empty)
           vMerkleTree: 26a3ff5d3d
-        /*
+        */
         
         /* -- testnet
-        block.nTime = 1420462252 
+        block.nTime = 1405769613 
         block.nNonce = 55887 
         block.GetHash = 0000910a87c1385247edc82808ec498a2d738fea5f0d3f8801512d6b84ad6f72
         hashMerkleRoot 26a3ff5d3dc46b091e7b58b6022982e6d27dff1bab3bd1da6beb4790983c87c4
@@ -2462,7 +2462,7 @@ bool LoadBlockIndex(bool fAllowNew)
 
         const char* pszTimestamp = "Paris post office siege";
         CTransaction txNew;
-        txNew.nTime = 1421472716;
+        txNew.nTime = 1421501815;
         txNew.vin.resize(1);
         txNew.vout.resize(1);
         txNew.vin[0].scriptSig = CScript() << 0 << CBigNum(42) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
@@ -2473,18 +2473,19 @@ bool LoadBlockIndex(bool fAllowNew)
         block.hashPrevBlock = 0;
         block.hashMerkleRoot = block.BuildMerkleTree();
         block.nVersion = 1;
-        block.nTime    = 1421472716;
+        block.nTime    = 1421501815;
         block.nBits    = bnProofOfWorkLimit.GetCompact();
-        block.nNonce   = !fTestNet ? 539223 : 0;
+        block.nNonce   = !fTestNet ? 77563 : 55887;
         
         
         //// debug print
         printf("%s\n", block.GetHash().ToString().c_str());
         printf("%s\n", hashGenesisBlock.ToString().c_str());
         printf("%s\n", block.hashMerkleRoot.ToString().c_str());
-        assert(block.hashMerkleRoot == uint256("0xc0c1336a3a78a8ebbc45da9bb250b5f966873380956d669af38d2b46acc2f37f"));
 
-        
+        assert(block.hashMerkleRoot == uint256("0x5debafe27b06e136955bfc439b74c284fd58ea5096d929a5957752bf86a6c0be"));
+
+        /*
         // If genesis block hash does not match, then generate new genesis hash.
         if (block.GetHash() != hashGenesisBlock)
         {
@@ -2514,8 +2515,8 @@ bool LoadBlockIndex(bool fAllowNew)
         printf("block.nNonce = %u \n", block.nNonce);
         printf("block.GetHash = %s\n", block.GetHash().ToString().c_str());
     }
-    
-      
+    */
+
         block.print();
         assert(block.GetHash() == (!fTestNet ? hashGenesisBlock : hashGenesisBlockTestNet));
         assert(block.CheckBlock());

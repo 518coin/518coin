@@ -182,7 +182,7 @@ private slots:
     /** Switch to send coins page */
     void gotoSendCoinsPage();
     /** Switch to message page */
-    //void gotoMessagePage();
+    void gotoMessagePage();
 
     /** Show Sign/Verify Message dialog and switch to sign message tab */
     void gotoSignMessageTab(QString addr = "");
