@@ -127,7 +127,7 @@ obj/scrypt-x86_64.o: scrypt-x86_64.S
 	g++ $(CFLAGS) $(LDFLAGS) -o $@ $(LIBPATHS) $^ $(LIBS)
 
 clean:
-	-del /Q 518coind
+	-del /Q 518coind.exe
 	-del /Q obj\*
 	-del /Q obj\zerocoin\*
 

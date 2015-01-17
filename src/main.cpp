@@ -963,13 +963,14 @@ uint256 WantedByOrphan(const CBlock* pblockOrphan)
 // miner's coin base reward
 int64_t GetProofOfWorkReward(int nHeight, int64_t nFees)
 {
-    int64_t nSubsidy = 0;
+    int64_t nSubsidy = 0 * COIN;
     
-    if (nHeight <= 0)
-        nSubsidy = 0;
-
-    if (nHeight == LAST_POW_BLOCK)
+   
+    if (nHeight == 1)
         nSubsidy = 120000000 * COIN;
+    else
+    if (nHeight <= LAST_POW_BLOCK)
+        nSubsidy = 0 * COIN;
 
     if (fDebug && GetBoolArg("-printcreation"))
         printf("GetProofOfWorkReward() : create=%s nSubsidy=%"PRId64"\n", FormatMoney(nSubsidy).c_str(), nSubsidy);
@@ -2461,7 +2462,7 @@ bool LoadBlockIndex(bool fAllowNew)
 
         const char* pszTimestamp = "Paris post office siege";
         CTransaction txNew;
-        txNew.nTime = 1421461102;
+        txNew.nTime = 1421472716;
         txNew.vin.resize(1);
         txNew.vout.resize(1);
         txNew.vin[0].scriptSig = CScript() << 0 << CBigNum(42) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
@@ -2472,18 +2473,18 @@ bool LoadBlockIndex(bool fAllowNew)
         block.hashPrevBlock = 0;
         block.hashMerkleRoot = block.BuildMerkleTree();
         block.nVersion = 1;
-        block.nTime    = 1421461102;
+        block.nTime    = 1421472716;
         block.nBits    = bnProofOfWorkLimit.GetCompact();
-        block.nNonce   = !fTestNet ? 6967228 : 0;
+        block.nNonce   = !fTestNet ? 539223 : 0;
         
         
         //// debug print
         printf("%s\n", block.GetHash().ToString().c_str());
         printf("%s\n", hashGenesisBlock.ToString().c_str());
         printf("%s\n", block.hashMerkleRoot.ToString().c_str());
-        assert(block.hashMerkleRoot == uint256("0xc7654b202168857195c40b5535f5e4100e198a2010dd12d6fd8ce700f3c062f5"));
+        assert(block.hashMerkleRoot == uint256("0xc0c1336a3a78a8ebbc45da9bb250b5f966873380956d669af38d2b46acc2f37f"));
 
-        /*
+        
         // If genesis block hash does not match, then generate new genesis hash.
         if (block.GetHash() != hashGenesisBlock)
         {
@@ -2513,7 +2514,7 @@ bool LoadBlockIndex(bool fAllowNew)
         printf("block.nNonce = %u \n", block.nNonce);
         printf("block.GetHash = %s\n", block.GetHash().ToString().c_str());
     }
-    */
+    
       
         block.print();
         assert(block.GetHash() == (!fTestNet ? hashGenesisBlock : hashGenesisBlockTestNet));
