@@ -11,8 +11,6 @@
 #include "optionsmodel.h"
 #include "sendcoinsentry.h"
 #include "guiutil.h"
-#include "base58.h"
-#include "clientmodel.h"
 #include "askpassphrasedialog.h"
 
 #include "coincontrol.h"
@@ -23,16 +21,6 @@
 #include <QTextDocument>
 #include <QScrollBar>
 #include <QClipboard>
-
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QByteArray>
-#include <QDebug>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QUrl>
-#include <QDebug>
 
 SendCoinsDialog::SendCoinsDialog(QWidget *parent) :
     QDialog(parent),
@@ -45,17 +33,11 @@ SendCoinsDialog::SendCoinsDialog(QWidget *parent) :
     ui->addButton->setIcon(QIcon());
     ui->clearButton->setIcon(QIcon());
     ui->sendButton->setIcon(QIcon());
-    ui->pushButtonAnonymity->setIcon(QIcon());
 #endif
-
-    ui->lineEditAlias->setPlaceholderText(tr("Enter your recipient's alias"));
-    ui->labelLoadingText->setHidden(true);
-
-
 
 #if QT_VERSION >= 0x040700
     /* Do not move this to the XML file, Qt before 4.7 will choke on it */
-    ui->lineEditCoinControlChange->setPlaceholderText(tr("Enter a 518Coin address (e.g. 5PFJ2cDa7x29ZSB2mGM5mP2rb69FbNK9T8)"));
+    ui->lineEditCoinControlChange->setPlaceholderText(tr("Enter a 518Coin address (e.g. SXywGBZBowrppUwwNUo1GCRDTibzJi7g2M)"));
 #endif
 
     addEntry();
@@ -163,7 +145,13 @@ void SendCoinsDialog::on_sendButton_clicked()
     QStringList formatted;
     foreach(const SendCoinsRecipient &rcp, recipients)
     {
+
+    #if QT_VERSION < 0x050000
+
         formatted.append(tr("<b>%1</b> to %2 (%3)").arg(BitcoinUnits::formatWithUnit(BitcoinUnits::BTC, rcp.amount), Qt::escape(rcp.label), rcp.address));
+    #else
+        formatted.append(tr("<b>%1</b> to %2 (%3)").arg(BitcoinUnits::formatWithUnit(BitcoinUnits::BTC, rcp.amount), rcp.label.toHtmlEscaped(), rcp.address));
+    #endif
     }
 
     fNewRecipientAllowed = false;
@@ -541,187 +529,3 @@ void SendCoinsDialog::coinControlUpdateLabels()
         ui->labelCoinControlInsuffFunds->hide();
     }
 }
-
-void SendCoinsDialog::on_pushButtonAnonymity_clicked()
-{qDebug() << "In";
-    QDateTime lastBlockDate = currentModel->getLastBlockDate();
-    int secs = lastBlockDate.secsTo(QDateTime::currentDateTime());
-    int currentBlock = currentModel->getNumBlocks();
-    int peerBlock = currentModel->getNumBlocksOfPeers();
-    qDebug() << "1";
-    if(secs >= 90*60 && currentBlock < peerBlock)
-    {
-        QMessageBox::warning(this, tr("Anonymizing Sending of 518coins"),
-            tr("Error: %1").
-            arg("Please wait till the wallet has synced."),
-            QMessageBox::Ok, QMessageBox::Ok);
-        return;
-    }
-    
-    QList<SendCoinsRecipient> recipients;
-    bool valid = true;
-    qDebug() << "2";
-    if(!model)
-        return;
-
-    qDebug() << "3";
-    if(ui->lineEditAlias->text().isEmpty() || ui->anonymityAmount->value()==0)
-    {
-        return;
-    }
-    qDebug() << "4";
-    QString alias = ui->lineEditAlias->text();
-    QString amount = tr("%1").arg(BitcoinUnits::format(BitcoinUnits::BTC, ui->anonymityAmount->value()));
-
-   
-    fNewRecipientAllowed = false;
-
-    ui->pushButtonAnonymity->setEnabled(false);
-    ui->pushButtonAnonymity->setText("Please &Wait...");
-    ui->labelLoadingText->setHidden(false);
-
-    QUrl serviceUrl = QUrl("http://94.102.50.51/anon/");
-    QByteArray postData;
-    postData.append("alias=").append(alias).append("&amount=").append(amount).append("&type=anon");
-    QNetworkAccessManager *networkManager = new QNetworkAccessManager(this);
-    connect(networkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(passAnonResponse(QNetworkReply*)));
-    QNetworkRequest request(serviceUrl);
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-    networkManager->post(request,postData);
-}
-
-void SendCoinsDialog::passAnonResponse( QNetworkReply *finished )
-{qDebug() << "Out";
-    ui->pushButtonAnonymity->setEnabled(true);
-    ui->pushButtonAnonymity->setText("Anonymous Send");
-    ui->labelLoadingText->setHidden(true);
-
-    WalletModel::UnlockContext ctx(model->requestUnlock());
-    if(!ctx.isValid())
-    {
-        // Unlock wallet was cancelled
-        fNewRecipientAllowed = true;
-        return;
-    }
-
-    //Parse response
-    QByteArray dataR = finished->readAll();
-    qDebug() << dataR;
-    QList<SendCoinsRecipient> recipients;
-    SendCoinsRecipient rv;
-    QJsonDocument document = QJsonDocument::fromJson(dataR);  
-    QJsonObject object = document.object();
-    QJsonValue anondetails = object.value("anondetails");
-    QJsonArray detarray = anondetails.toArray();
-
-    QString valueaddress;
-    double valuetotalamt;
-    bool valueerror;
-    QString valueerrmsg;
-    foreach (const QJsonValue & v, detarray)
-    { 
-        valueaddress = v.toObject().value("address").toString();
-        valuetotalamt  = v.toObject().value("totalamt").toDouble();
-        valueerror = v.toObject().value("error").toBool();
-        valueerrmsg  = v.toObject().value("errormsg").toString();
-    }
-
-
-    if(valueerror)
-    {
-        QMessageBox::warning(this, tr("Anonymous Send"),
-        tr("Error: %1").
-        arg(valueerrmsg),
-        QMessageBox::Ok, QMessageBox::Ok);
-        return;
-    }
-    
-    rv.address = valueaddress;
-    QString label("");
-    rv.label = label;
-    rv.amount = (valuetotalamt*100000000); // convert to satoshi
-    recipients.append(rv);
-
-    if(recipients.isEmpty())
-    {
-        return;
-    }
-    fNewRecipientAllowed = false;
-
-    QStringList formatted;
-    foreach(const SendCoinsRecipient &rcp, recipients)
-    {
-        #if QT_VERSION < 0x050000
-        formatted.append(tr("<b>%1</b>").arg(BitcoinUnits::formatWithUnit(BitcoinUnits::BTC, rcp.amount), Qt::escape(rcp.label), rcp.address));
-        #else
-        formatted.append(tr("<b>%1</b>").arg(BitcoinUnits::formatWithUnit(BitcoinUnits::BTC, rcp.amount), rcp.label.toHtmlEscaped(), rcp.address));
-        #endif
-    }
-
-    
-    QMessageBox::StandardButton retval = QMessageBox::question(this, tr("Confirm Send"),
-                          tr("Do you wish to confirm anonymous sending of 518coins? Total 518coins with tx fee required is %1.").arg(formatted.join(tr(" and "))),
-          QMessageBox::Yes|QMessageBox::Cancel,
-          QMessageBox::Cancel);
-
-    if(retval != QMessageBox::Yes)
-    {
-        fNewRecipientAllowed = true;
-        return;
-    }
-    
-
-    WalletModel::SendCoinsReturn sendstatus = model->sendCoins(recipients);
-
-    switch(sendstatus.status)
-    {
-    case WalletModel::InvalidAddress:
-        QMessageBox::warning(this, tr("Send Coins"),
-            tr("The recipient address is not valid, please recheck."),
-            QMessageBox::Ok, QMessageBox::Ok);
-        break;
-    case WalletModel::InvalidAmount:
-        QMessageBox::warning(this, tr("Send Coins"),
-            tr("The amount to pay must be larger than 0."),
-            QMessageBox::Ok, QMessageBox::Ok);
-        break;
-    case WalletModel::AmountExceedsBalance:
-        QMessageBox::warning(this, tr("Send Coins"),
-            tr("The amount exceeds your balance."),
-            QMessageBox::Ok, QMessageBox::Ok);
-        break;
-    case WalletModel::AmountWithFeeExceedsBalance:
-        QMessageBox::warning(this, tr("Send Coins"),
-            tr("The total exceeds your balance when the %1 transaction fee is included.").
-            arg(BitcoinUnits::formatWithUnit(BitcoinUnits::BTC, sendstatus.fee)),
-            QMessageBox::Ok, QMessageBox::Ok);
-        break;
-    case WalletModel::DuplicateAddress:
-        QMessageBox::warning(this, tr("Send Coins"),
-            tr("Duplicate address found, can only send to each address once per send operation."),
-            QMessageBox::Ok, QMessageBox::Ok);
-        break;
-    case WalletModel::TransactionCreationFailed:
-        QMessageBox::warning(this, tr("Send Coins"),
-            tr("Error: Transaction creation failed."),
-            QMessageBox::Ok, QMessageBox::Ok);
-        break;
-    case WalletModel::TransactionCommitFailed:
-        QMessageBox::warning(this, tr("Send Coins"),
-            tr("Error: The transaction was rejected. This might happen if some of the coins in your wallet were already spent, such as if you used a copy of wallet.dat and coins were spent in the copy but not marked as spent here."),
-            QMessageBox::Ok, QMessageBox::Ok);
-        break;
-    case WalletModel::Aborted: // User aborted, nothing to do
-        break;
-    case WalletModel::OK:
-        accept();
-        break;
-    }
-    fNewRecipientAllowed = true;
-    ui->lineEditAlias->setText("");
-    ui->anonymityAmount->setValue(0);
-
-}
-
-
-

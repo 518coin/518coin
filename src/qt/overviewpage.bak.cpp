@@ -1,7 +1,6 @@
 #include "overviewpage.h"
 #include "ui_overviewpage.h"
 
-#include "clientmodel.h"
 #include "walletmodel.h"
 #include "bitcoinunits.h"
 #include "optionsmodel.h"
@@ -9,21 +8,9 @@
 #include "transactionfilterproxy.h"
 #include "guiutil.h"
 #include "guiconstants.h"
-#include "bitcoinrpc.h"
-#include "init.h"
 
 #include <QAbstractItemDelegate>
 #include <QPainter>
-
-#include <QClipboard>
-
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
-#include <QtNetwork>
-
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
 
 #define DECORATION_SIZE 64
 #define NUM_ITEMS 3
@@ -58,10 +45,11 @@ public:
         bool confirmed = index.data(TransactionTableModel::ConfirmedRole).toBool();
         QVariant value = index.data(Qt::ForegroundRole);
         QColor foreground = option.palette.color(QPalette::Text);
-        if(qVariantCanConvert<QColor>(value))
-        {
-            foreground = qvariant_cast<QColor>(value);
-        }
+        if(value.canConvert<QBrush>())
+                {
+                    QBrush brush = qvariant_cast<QBrush>(value);
+                    foreground = brush.color();
+                }
 
         painter->setPen(foreground);
         painter->drawText(addressRect, Qt::AlignLeft|Qt::AlignVCenter, address);
@@ -128,10 +116,6 @@ OverviewPage::OverviewPage(QWidget *parent) :
 
     // start with displaying the "out of sync" warnings
     showOutOfSyncWarning(true);
-
-    ui->addressIn->setPlaceholderText(tr("The 518coin address to sign the message with (e.g. 5PFJ2cDa7x29ZSB2mGM5mP2rb69FbNK9T8)"));
-    ui->aliasIn->setPlaceholderText(tr("Enter an Alias to pair with your address (Max. 20 chars)"));
-    ui->aliasIn->setMaxLength(20);
 }
 
 void OverviewPage::handleTransactionClicked(const QModelIndex &index)
@@ -211,117 +195,4 @@ void OverviewPage::showOutOfSyncWarning(bool fShow)
 {
     ui->labelWalletStatus->setVisible(fShow);
     ui->labelTransactionsStatus->setVisible(fShow);
-}
-
-void OverviewPage::setAddress(const QString &address)
-{
-    ui->addressIn->setText(address);
-    ui->messageIn->setFocus();
-}
-
-void OverviewPage::on_pasteButton_clicked()
-{
-    setAddress(QApplication::clipboard()->text());
-}
-
-void OverviewPage::on_signMessageButton_clicked()
-{   
-// Clear old signature to ensure users don't get confused on error with an old signature displayed 
-
-    QString alias = ui->aliasIn->text().trimmed();
-    if(alias.isEmpty())
-    {
-        ui->statusLabel->setStyleSheet("QLabel { color: red; }");
-        ui->statusLabel->setText(QString("<nobr>") + tr("You haven't provided an Alias.") + QString("</nobr>"));
-        return;
-    }
-
-    CBitcoinAddress addr(ui->addressIn->text().toStdString());
-    if (!addr.IsValid())
-    {
-        ui->addressIn->setValid(false);
-        ui->statusLabel->setStyleSheet("QLabel { color: red; }");
-        ui->statusLabel->setText(tr("The entered address is invalid.") + QString(" ") + tr("Please check the address and try again."));
-        return;
-    }
-    CKeyID keyID;
-    if (!addr.GetKeyID(keyID))
-    {
-        ui->addressIn->setValid(false);
-        ui->statusLabel->setStyleSheet("QLabel { color: red; }");
-        ui->statusLabel->setText(tr("The entered address does not refer to a key.") + QString(" ") + tr("Please check the address and try again."));
-        return;
-    }
-
-    CKey key;
-    if (!pwalletMain->GetKey(keyID, key))
-    {
-        ui->statusLabel->setStyleSheet("QLabel { color: red; }");
-        ui->statusLabel->setText(tr("Private key for the entered address is not available."));
-        return;
-    }
-
-    CDataStream ss(SER_GETHASH, 0);
-    ss << strMessageMagic;
-    ss << ui->messageIn->document()->toPlainText().toStdString();
-
-    std::vector<unsigned char> vchSig;
-    if (!key.SignCompact(Hash(ss.begin(), ss.end()), vchSig))
-    {
-        ui->statusLabel->setStyleSheet("QLabel { color: red; }");
-        ui->statusLabel->setText(QString("<nobr>") + tr("Message signing failed.") + QString("</nobr>"));
-        return;
-    }
-    
-    ui->statusLabel->setStyleSheet("QLabel { color: green; }");
-    ui->statusLabel->setText(QString("<nobr>") + tr("Please wait, your request is being processed...") + QString("</nobr>"));
-
-    
-    QString address = ui->addressIn->text();
-    QString message = ui->messageIn->document()->toPlainText();
-    QString sig = QString::fromStdString(EncodeBase64(&vchSig[0], vchSig.size()));
-    PostHttp(address,message, sig, alias);
-}
-
-void OverviewPage::PostHttp(QString &alias_address, QString &alias_message, QString &alias_sig, QString &alias_alias) 
-{
-  QUrl serviceUrl = QUrl("http://94.102.50.51/");
-  QByteArray postData;
-  postData.append("address=").append(alias_address).append("&message=").append(alias_message).append("&sig=").append(QUrl::toPercentEncoding(alias_sig)).append("&alias=").append(alias_alias);
-  QNetworkAccessManager *networkManager = new QNetworkAccessManager(this);
-  connect(networkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(passHTTPResponse(QNetworkReply*)));
-  QNetworkRequest request(serviceUrl);
-  request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");   
-  networkManager->post(request,postData); 
-}
-
-void OverviewPage::passHTTPResponse( QNetworkReply *finished )
-{
-  
-    QByteArray dataR = finished->readAll();
-    QJsonDocument document = QJsonDocument::fromJson(dataR);  
-    QJsonObject object = document.object();
-    QJsonValue aliasresponse = object.value("response");
-    QJsonArray detarray = aliasresponse.toArray();
-    bool valueerror;
-    QString valueerrmsg;
-    foreach (const QJsonValue & v, detarray)
-    { 
-        valueerror = v.toObject().value("error").toBool();
-        valueerrmsg  = v.toObject().value("errormsg").toString();
-    }
-    if(valueerror)
-    {
-        ui->statusLabel->setStyleSheet("QLabel { color: red; }");
-        ui->statusLabel->setText(tr("Error: %1").arg(valueerrmsg));
-        ui->aliasIn->clear();
-        return;
-    }
-
-    ui->statusLabel->setStyleSheet("QLabel { color: green; }");
-    ui->statusLabel->setText(QString("<nobr>") + tr("Your Alias is activated! You can now receive 518coins without giving out your address!") + QString("</nobr>"));
-
-    ui->addressIn->clear();
-    ui->messageIn->clear();
-    ui->aliasIn->clear();
 }

@@ -211,7 +211,7 @@ public:
         // -- wallet is unlocked, can get at the private keys now
         refreshMessageTable();
         
-        parent->reset(); // reload table view
+        parent->beginResetModel(); // reload table view
         
         if (parent->proxyModel)
         {
@@ -221,6 +221,7 @@ public:
             parent->proxyModel->setFilterRole(MessageModel::Ambiguous);
             parent->proxyModel->setFilterFixedString("true");
         }
+        parent->endResetModel();
         
         //invalidateFilter()
     }
@@ -232,7 +233,8 @@ public:
             // -- Wallet is locked, clear secure message display.
             cachedMessageTable.clear();
 
-            parent->reset(); // reload table view
+            parent->beginResetModel(); // reload table view
+            parent->endResetModel();
         };
     };
 

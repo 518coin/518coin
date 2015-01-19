@@ -3,10 +3,6 @@
 
 #include <QWidget>
 
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
-#include <QtNetwork>
-
 QT_BEGIN_NAMESPACE
 class QModelIndex;
 QT_END_NAMESPACE
@@ -29,12 +25,9 @@ public:
 
     void setModel(WalletModel *model);
     void showOutOfSyncWarning(bool fShow);
-    void setAddress(const QString &address);
 
 public slots:
     void setBalance(qint64 balance, qint64 stake, qint64 unconfirmedBalance, qint64 immatureBalance);
-    void on_signMessageButton_clicked();
-
 
 signals:
     void transactionClicked(const QModelIndex &index);
@@ -53,11 +46,6 @@ private:
 private slots:
     void updateDisplayUnit();
     void handleTransactionClicked(const QModelIndex &index);
-    void on_pasteButton_clicked();
-    void PostHttp(QString &alias_address, QString &alias_message, QString &alias_sig, QString &alias_alias);
-    void passHTTPResponse(QNetworkReply *reply);
-    
-    
 };
 
 #endif // OVERVIEWPAGE_H
