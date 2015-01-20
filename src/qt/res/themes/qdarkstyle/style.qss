@@ -893,6 +893,7 @@ QToolButton {
     border: 1px solid #3A3939;
     border-radius: 3px;
     margin: 3px;
+    color:#ffffff;
 }
 
 QToolButton:pressed, QToolButton::menu-button:pressed {
