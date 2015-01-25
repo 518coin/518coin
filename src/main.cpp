@@ -963,15 +963,12 @@ uint256 WantedByOrphan(const CBlock* pblockOrphan)
 // miner's coin base reward
 int64_t GetProofOfWorkReward(int nHeight, int64_t nFees)
 {
-    int64_t nSubsidy = 0 * COIN;
+    int64_t nSubsidy = 1 * COIN;
     
    
     if (nHeight == 1)
         nSubsidy = 120000000 * COIN;
-    else
-    if (nHeight <= LAST_POW_BLOCK)
-        nSubsidy = 0 * COIN;
-
+    
     if (fDebug && GetBoolArg("-printcreation"))
         printf("GetProofOfWorkReward() : create=%s nSubsidy=%"PRId64"\n", FormatMoney(nSubsidy).c_str(), nSubsidy);
 
