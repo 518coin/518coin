@@ -25,7 +25,7 @@ class CInv;
 class CRequestTracker;
 class CNode;
 
-static const int LAST_POW_BLOCK = 3000;
+static const int LAST_POW_BLOCK = 3500;
 
 static const unsigned int MAX_BLOCK_SIZE = 1000000;
 static const unsigned int MAX_BLOCK_SIZE_GEN = MAX_BLOCK_SIZE/2;
@@ -42,7 +42,7 @@ inline bool MoneyRange(int64_t nValue) { return (nValue >= 0 && nValue <= MAX_MO
 static const unsigned int LOCKTIME_THRESHOLD = 500000000; // Tue Nov  5 00:53:20 1985 UTC
 
 
-static const uint256 hashGenesisBlock("0x000001eff6d022a3ec93843ab2310f545b171ba09ffea37a97f9218967bf8c27");
+static const uint256 hashGenesisBlock("0x000004d9324505c77c985b79ffd5b6fa7964273e8abfe07fc661a295937273a5");
 static const uint256 hashGenesisBlockTestNet("0x0000910a87c1385247edc82808ec498a2d738fea5f0d3f8801512d6b84ad6f72");
 
 

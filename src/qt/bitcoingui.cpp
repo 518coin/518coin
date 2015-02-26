@@ -71,7 +71,7 @@ extern CWallet* pwalletMain;
 extern int64_t nLastCoinStakeSearchInterval;
 double GetPoSKernelPS();
 
-#define VERTICAL_TOOBAR_STYLESHEET "QToolBar {\
+#define VERTICAL_TOOLBAR_STYLESHEET "QToolBar {\
 border:none;\
 height:100%;\
 padding-top:20px;\
@@ -106,6 +106,7 @@ border: 1px solid gray;\
     border: 1px solid #393838;\
     background: 1px solid #302F2F;\
     font-weight: bold;\
+    color: #ffffff;\
 }"
 
 ActiveLabel::ActiveLabel(const QString & text, QWidget * parent):
@@ -975,14 +976,14 @@ void BitcoinGUI::mainToolbarOrientation(Qt::Orientation orientation)
         mainIcon->setPixmap(QPixmap(":images/518-vertical"));
         mainIcon->show();
 
-        mainToolbar->setStyleSheet(VERTICAL_TOOBAR_STYLESHEET);
+        mainToolbar->setStyleSheet(VERTICAL_TOOLBAR_STYLESHEET);
         messageAction->setIconText(tr("Encrypted &Messages"));
     }
 }
 
 void BitcoinGUI::secondaryToolbarOrientation(Qt::Orientation orientation)
 {
-    secondaryToolbar->setStyleSheet(orientation == Qt::Horizontal ? HORIZONTAL_TOOLBAR_STYLESHEET : VERTICAL_TOOBAR_STYLESHEET);
+    secondaryToolbar->setStyleSheet(orientation == Qt::Horizontal ? HORIZONTAL_TOOLBAR_STYLESHEET : VERTICAL_TOOLBAR_STYLESHEET);
 }
 
 void BitcoinGUI::setEncryptionStatus(int status)
