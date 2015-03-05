@@ -2457,9 +2457,9 @@ bool LoadBlockIndex(bool fAllowNew)
           vMerkleTree: 26a3ff5d3d 
         */
 
-        const char* pszTimestamp = "Only 40 percent of global population has ever connected to the Internet";
+        const char* pszTimestamp = "Microsoft's Paul Allen says he's found sunken Japanese battleship Musashi";
         CTransaction txNew;
-        txNew.nTime = 1424933986;
+        txNew.nTime = 1425501735;
         txNew.vin.resize(1);
         txNew.vout.resize(1);
         txNew.vin[0].scriptSig = CScript() << 0 << CBigNum(42) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
@@ -2470,9 +2470,9 @@ bool LoadBlockIndex(bool fAllowNew)
         block.hashPrevBlock = 0;
         block.hashMerkleRoot = block.BuildMerkleTree();
         block.nVersion = 1;
-        block.nTime    = 1424933986;
+        block.nTime    = 1425501735;
         block.nBits    = bnProofOfWorkLimit.GetCompact();
-        block.nNonce   = !fTestNet ? 971396 : 55887;
+        block.nNonce   = !fTestNet ? 872118 : 55887;
         
         
         //// debug print
@@ -2480,11 +2480,11 @@ bool LoadBlockIndex(bool fAllowNew)
         printf("%s\n", hashGenesisBlock.ToString().c_str());
         printf("%s\n", block.hashMerkleRoot.ToString().c_str());
 
-        assert(block.hashMerkleRoot == uint256("0xe0cd1ff438c8fcd09190321e00cb59e89afe6183be1aad4fa4e42daebfa10237"));
+        assert(block.hashMerkleRoot == uint256("0x7d2047e8bb2a50474ad7df2657a1cc5df991d3587f0b13f2c6a313e5906f8258"));
 
         
         // If genesis block hash does not match, then generate new genesis hash.
-       /* if (block.GetHash() != hashGenesisBlock)
+        /*if (block.GetHash() != hashGenesisBlock)
         {
         printf("Searching for genesis block...\n");
         // This will figure out a valid hash and Nonce if you're
@@ -2511,8 +2511,8 @@ bool LoadBlockIndex(bool fAllowNew)
         printf("block.nTime = %u \n", block.nTime);
         printf("block.nNonce = %u \n", block.nNonce);
         printf("block.GetHash = %s\n", block.GetHash().ToString().c_str());
-    }*/
-    
+    }
+    */
 
         block.print();
         assert(block.GetHash() == (!fTestNet ? hashGenesisBlock : hashGenesisBlockTestNet));
